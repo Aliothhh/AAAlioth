@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>法哲类型指标 (JTI) 测评</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1e3a8a',
+                        secondary: '#3b82f6',
+                        accent: '#6366f1',
+                        dark: '#0f172a',
+                        light: '#f8fafc',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                        serif: ['Georgia', 'serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .text-shadow {
+                text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            .card-shadow {
+                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            }
+            .transition-custom {
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans text-gray-800 min-h-screen">
+    <!-- 顶部导航 -->
+    <nav class="bg-primary text-white shadow-lg fixed w-full top-0 z-50 transition-custom">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <i class="fa fa-balance-scale text-xl"></i>
+                <h1 class="text-xl font-bold">JTI 法哲类型指标</h1>
+            </div>
+            <div class="hidden md:flex items-center space-x-6">
+                <a href="#intro" class="hover:text-blue-200 transition-custom">测评介绍</a>
+                <a href="#test" class="hover:text-blue-200 transition-custom">开始测评</a>
+                <a href="#about" class="hover:text-blue-200 transition-custom">关于JTI</a>
+            </div>
+            <button id="menu-toggle" class="md:hidden text-white focus:outline-none">
+                <i class="fa fa-bars text-xl"></i>
+            </button>
+        </div>
+        <!-- 移动端菜单 -->
+        <div id="mobile-menu" class="hidden md:hidden bg-primary/95 backdrop-blur-sm">
+            <div class="container mx-auto px-4 py-2 flex flex-col space-y-3">
+                <a href="#intro" class="py-2 hover:text-blue-200 transition-custom">测评介绍</a>
+                <a href="#test" class="py-2 hover:text-blue-200 transition-custom">开始测评</a>
+                <a href="#about" class="py-2 hover:text-blue-200 transition-custom">关于JTI</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 英雄区域 -->
+    <header class="bg-gradient-to-br from-primary to-dark pt-28 pb-16 text-white">
+        <div class="container mx-auto px-4 text-center">
+            <h1 class="text-[clamp(2rem,5vw,3.5rem)] font-bold mb-4 text-shadow">法哲类型指标测评</h1>
+            <p class="text-[clamp(1rem,2vw,1.25rem)] max-w-3xl mx-auto mb-8 text-blue-100">
+                Jurisprudential Type Indicator (JTI)
+            </p>
+            <p class="text-lg max-w-2xl mx-auto mb-10 text-blue-100/90">
+                基于当代法理学主流学术框架，融合心理测量学信效度控制技术，
+                帮助您定位自己在法哲学光谱中的思维倾向
+            </p>
+            <a href="#test" class="inline-block bg-secondary hover:bg-secondary/90 text-white font-semibold py-3 px-8 rounded-lg shadow-lg hover:shadow-xl transition-custom transform hover:-translate-y-1">
+                开始测评 <i class="fa fa-arrow-down ml-2"></i>
+            </a>
+        </div>
+    </header>
+
+    <!-- 介绍部分 -->
+    <section id="intro" class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="max-w-4xl mx-auto">
+                <h2 class="text-3xl font-bold text-center mb-12 text-primary">测评介绍</h2>
+                
+                <div class="grid md:grid-cols-2 gap-8 mb-12">
+                    <div class="bg-gray-50 p-6 rounded-xl card-shadow">
+                        <div class="text-secondary text-4xl mb-4">
+                            <i class="fa fa-book"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">学术严谨性</h3>
+                        <p class="text-gray-700">
+                            本问卷严格依据学术文献中的流派划分标准编制，所有48道题目均经过理论验证和逻辑索引，
+                            确保测评结果的学术可靠性。
+                        </p>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-6 rounded-xl card-shadow">
+                        <div class="text-secondary text-4xl mb-4">
+                            <i class="fa fa-check-circle"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">信效度控制</h3>
+                        <p class="text-gray-700">
+                            内置测谎题系统和奇偶数题一致性检验，能够有效识别随机作答和社会赞许性反应，
+                            最大程度确保测评结果的有效性。
+                        </p>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-6 rounded-xl card-shadow">
+                        <div class="text-secondary text-4xl mb-4">
+                            <i class="fa fa-bar-chart"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">多维度分析</h3>
+                        <p class="text-gray-700">
+                            从形式-实质、规范-经验、自由-社群三个核心维度进行分析，
+                            生成总倾向量表分数、主类型归属和次级类型倾向。
+                        </p>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-6 rounded-xl card-shadow">
+                        <div class="text-secondary text-4xl mb-4">
+                            <i class="fa fa-user"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">双重解析</h3>
+                        <p class="text-gray-700">
+                            提供"通俗版"和"专业学术版"双重解析，以及诗意总结，
+                            满足不同受众的理解需求和深度探索。
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="bg-blue-50 p-6 rounded-xl border-l-4 border-primary">
+                    <h3 class="text-xl font-bold mb-3 text-primary">评分说明</h3>
+                    <p class="mb-4">请根据您的第一反应如实作答，理论光谱没有标准答案，只有属于您的法哲倾向。</p>
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                        <div class="flex items-center">
+                            <span class="bg-primary text-white w-8 h-8 rounded-full flex items-center justify-center font-bold mr-3">1</span>
+                            <span>完全不同意</span>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="bg-primary/80 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold mr-3">2</span>
+                            <span>比较不同意</span>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="bg-primary/60 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold mr-3">3</span>
+                            <span>略微不同意</span>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="bg-primary/40 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold mr-3">4</span>
+                            <span>略微同意</span>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="bg-primary/20 text-primary w-8 h-8 rounded-full flex items-center justify-center font-bold mr-3">5</span>
+                            <span>比较同意</span>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="bg-gray-200 text-primary w-8 h-8 rounded-full flex items-center justify-center font-bold mr-3">6</span>
+                            <span>完全同意</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 测评部分 -->
+    <section id="test" class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="max-w-4xl mx-auto">
+                <h2 class="text-3xl font-bold text-center mb-12 text-primary">法哲类型指标测评</h2>
+                
+                <!-- 进度条 -->
+                <div class="mb-8">
+                    <div class="flex justify-between mb-2">
+                        <span id="progress-text" class="text-sm font-medium text-gray-700">第一部分：理论倾向 (1-12题)</span>
+                        <span id="progress-percent" class="text-sm font-medium text-gray-700">0%</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2.5">
+                        <div id="progress-bar" class="bg-primary h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+                    </div>
+                </div>
+                
+                <!-- 问卷容器 -->
+                <div id="questionnaire" class="bg-white rounded-xl card-shadow p-8 mb-8">
+                    <!-- 问题将通过JavaScript动态加载 -->
+                    <div id="question-container" class="space-y-8">
+                        <div class="text-center py-12">
+                            <p class="text-lg text-gray-600 mb-6">点击下方按钮开始测评</p>
+                            <button id="start-btn" class="bg-primary hover:bg-primary/90 text-white font-semibold py-3 px-8 rounded-lg shadow-lg hover:shadow-xl transition-custom">
+                                开始答题 <i class="fa fa-play ml-2"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- 导航按钮 -->
+                    <div id="nav-buttons" class="hidden flex justify-between mt-10 pt-6 border-t border-gray-200">
+                        <button id="prev-btn" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-6 rounded-lg transition-custom flex items-center">
+                            <i class="fa fa-arrow-left mr-2"></i> 上一题
+                        </button>
+                        <button id="next-btn" class="bg-primary hover:bg-primary/90 text-white font-medium py-2 px-6 rounded-lg transition-custom flex items-center">
+                            下一题 <i class="fa fa-arrow-right ml-2"></i>
+                        </button>
+                        <button id="submit-btn" class="hidden bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-6 rounded-lg transition-custom flex items-center">
+                            提交测评 <i class="fa fa-check ml-2"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 结果展示 -->
+                <div id="results" class="hidden bg-white rounded-xl card-shadow p-8">
+                    <h3 class="text-2xl font-bold text-center mb-8 text-primary">您的法哲类型结果</h3>
+                    
+                    <!-- 维度分数 -->
+                    <div class="grid md:grid-cols-3 gap-6 mb-10">
+                        <div class="bg-gray-50 p-5 rounded-lg">
+                            <h4 class="font-bold text-lg mb-3 text-center">形式—实质轴</h4>
+                            <div class="flex justify-between text-sm mb-2">
+                                <span>形式优先</span>
+                                <span>实质优先</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-4 mb-2">
+                                <div id="dim-a-bar" class="bg-secondary h-4 rounded-full transition-all duration-1000" style="width: 50%"></div>
+                            </div>
+                            <p id="dim-a-result" class="text-center text-sm font-medium"></p>
+                        </div>
+                        
+                        <div class="bg-gray-50 p-5 rounded-lg">
+                            <h4 class="font-bold text-lg mb-3 text-center">规范—经验轴</h4>
+                            <div class="flex justify-between text-sm mb-2">
+                                <span>规范优先</span>
+                                <span>经验优先</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-4 mb-2">
+                                <div id="dim-b-bar" class="bg-secondary h-4 rounded-full transition-all duration-1000" style="width: 50%"></div>
+                            </div>
+                            <p id="dim-b-result" class="text-center text-sm font-medium"></p>
+                        </div>
+                        
+                        <div class="bg-gray-50 p-5 rounded-lg">
+                            <h4 class="font-bold text-lg mb-3 text-center">自由—社群轴</h4>
+                            <div class="flex justify-between text-sm mb-2">
+                                <span>自由优先</span>
+                                <span>社群优先</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-4 mb-2">
+                                <div id="dim-c-bar" class="bg-secondary h-4 rounded-full transition-all duration-1000" style="width: 50%"></div>
+                            </div>
+                            <p id="dim-c-result" class="text-center text-sm font-medium"></p>
+                        </div>
+                    </div>
+                    
+                    <!-- 主类型 -->
+                    <div class="bg-blue-50 p-6 rounded-xl mb-8 border-l-4 border-primary">
+                        <h4 class="text-xl font-bold mb-2 text-primary">您的主类型：<span id="main-type" class="text-2xl"></span></h4>
+                        <p id="type-poetry" class="italic text-gray-600 mb-4"></p>
+                        
+                        <div class="mb-4">
+                            <h5 class="font-bold mb-2">【通俗版解析】</h5>
+                            <p id="type-popular" class="text-gray-700"></p>
+                        </div>
+                        
+                        <div>
+                            <h5 class="font-bold mb-2">【学术版解析】</h5>
+                            <p id="type-academic" class="text-gray-700"></p>
+                        </div>
+                    </div>
+                    
+                    <!-- 信效度验证 -->
+                    <div class="bg-yellow-50 p-5 rounded-lg mb-8 border-l-4 border-yellow-500">
+                        <h4 class="font-bold mb-3 text-yellow-700">信效度验证结果</h4>
+                        <ul id="validation-results" class="list-disc pl-5 space-y-1 text-gray-700">
+                            <!-- 验证结果将通过JavaScript动态加载 -->
+                        </ul>
+                    </div>
+                    
+                    <!-- 重新测试按钮 -->
+                    <div class="text-center">
+                        <button id="restart-btn" class="bg-primary hover:bg-primary/90 text-white font-semibold py-3 px-8 rounded-lg shadow-lg hover:shadow-xl transition-custom">
+                            重新测试 <i class="fa fa-refresh ml-2"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 关于部分 -->
+    <section id="about" class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="max-w-4xl mx-auto">
+                <h2 class="text-3xl font-bold text-center mb-12 text-primary">关于JTI法哲类型指标</h2>
+                
+                <div class="prose max-w-none">
+                    <p class="mb-4">
+                        法哲类型指标(Jurisprudential Type Indicator, JTI)是基于当代法理学主流学术框架开发的人格测评工具，
+                        旨在帮助法律从业者、法学生和对法律感兴趣的人士了解自己在法哲学光谱中的思维倾向。
+                    </p>
+                    
+                    <p class="mb-4">
+                        本测评严格依据学术文献中的流派划分标准编制，融合了自然法学派、法律实证主义、社会学法学、
+                        批判法学和法律经济学等主要法理学流派的核心主张。
+                    </p>
+                    
+                    <h3 class="text-xl font-bold mt-8 mb-4 text-primary">理论基础</h3>
+                    
+                    <p class="mb-4">
+                        JTI测评建立在三个核心维度之上：
+                    </p>
+                    
+                    <ul class="list-disc pl-6 mb-6 space-y-2">
+                        <li><strong>形式—实质轴</strong>：衡量您更看重法律的形式有效性还是实质正义</li>
+                        <li><strong>规范—经验轴</strong>：衡量您更倾向于从规范应然还是经验实然角度看待法律</li>
+                        <li><strong>自由—社群轴</strong>：衡量您在法律价值排序中更优先考虑个体自由还是社群利益</li>
+                    </ul>
+                    
+                    <p class="mb-4">
+                        通过这三个维度的组合，JTI将法哲思维倾向划分为8种主类型，每种类型都对应着法理学传统中的特定思想流派。
+                    </p>
+                    
+                    <h3 class="text-xl font-bold mt-8 mb-4 text-primary">使用说明</h3>
+                    
+                    <p class="mb-4">
+                        本测评结果仅供自我探索和个人反思使用，不得作为选拔、评价或任何具有法律约束力的裁决依据。
+                        建议在不同时间间隔进行两次重测以捕捉重测信度。
+                    </p>
+                    
+                    <p class="text-gray-600 italic">
+                        "法律的生命不是逻辑，而是经验。" —— 奥利弗·温德尔·霍姆斯
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="bg-dark text-white py-8">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <div class="flex items-center space-x-2">
+                        <i class="fa fa-balance-scale text-xl"></i>
+                        <span class="text-lg font-bold">JTI 法哲类型指标</span>
+                    </div>
+                    <p class="text-gray-400 text-sm mt-2">© 2025 法哲类型指标研究团队</p>
+                </div>
+                
+                <div class="flex space-x-6">
+                    <a href="#" class="text-gray-400 hover:text-white transition-custom">
+                        <i class="fa fa-github text-xl"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-custom">
+                        <i class="fa fa-twitter text-xl"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-custom">
+                        <i class="fa fa-linkedin text-xl"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 题目数据
+        const questions = [
+            // 第一部分：理论倾向（1-24）
+            { id: 1, text: "法律的正当性最终来源于自然理性，而非任何人的意志或命令。", section: "第一部分：理论倾向" },
+            { id: 2, text: "即使某部法律由国家权威颁布，若其背离正义原则，我也认为它不应被遵从。", section: "第一部分：理论倾向" },
+            { id: 3, text: "法律与道德在概念上应当相互分离。法律的效力来源于社会规则实践，而不是来源于道德优越性。", section: "第一部分：理论倾向" },
+            { id: 4, text: "法律的权威不在于它是否“善”，而在于它是否按照既定的权力程序产生。", section: "第一部分：理论倾向" },
+            { id: 5, text: "法律的生命不是逻辑，而是经验。法律的功能在于回应真实的社会需求，而非固守抽象原则。", section: "第一部分：理论倾向" },
+            { id: 6, text: "法律的核心任务是平衡社会中的多重利益冲突，最有效的法律是带来最大社会效益的法律。", section: "第一部分：理论倾向" },
+            { id: 7, text: "法律判断本质上具有不确定性。法律推理的背后往往隐含着意识形态、阶级立场或权力的隐秘运作。", section: "第一部分：理论倾向" },
+            { id: 8, text: "法律文本应当以其经济效果来衡量——如果一项规则降低了交易效率，它就应当被修正。", section: "第一部分：理论倾向" },
+            { id: 9, text: "法律应当培育公民的德性和公共精神，而不仅仅是管束行为、划定底线。", section: "第一部分：理论倾向" },
+            { id: 10, text: "我倾向于相信，在所有文化中都存在一些不可动摇的正义底线（如禁止酷刑）。", section: "第一部分：理论倾向" },
+            { id: 11, text: "法律体系应当像科学体系一样，清除任何道德或政治的价值判断，以保证其纯粹的分析结构。", section: "第一部分：理论倾向" },
+            { id: 12, text: "如果一条法律在现实中从来得不到执行、也从来不影响人们的生活行为，那么它作为“法”的地位就是可疑的。", section: "第一部分：理论倾向" },
+            { id: 13, text: "法律应当被视为一种社会控制的工具，其有效性应以实际解决问题的绩效来检验。", section: "第一部分：理论倾向" },
+            { id: 14, text: "法律不应试图创造一种乌托邦式的绝对正义，而应务实地处理具体情境下的纠纷。", section: "第一部分：理论倾向" },
+            { id: 15, text: "法律文本的解释应当尊重立法者的原意，超越文本之外的社会效果解释可能侵蚀法治。", section: "第一部分：理论倾向" },
+            { id: 16, text: "“法律即法律”——只要经过合法程序产生的规范，就具有效力，不论内容是否道德。", section: "第一部分：理论倾向" },
+            { id: 17, text: "法律是一套由初级规则和次级规则构成的体系，其识别依赖于社会渊源（而非道德判断）。", section: "第一部分：理论倾向" },
+            { id: 18, text: "好的法律应当是“行动中的法律”——法院实际做什么，才真正反映了法律是什么。", section: "第一部分：理论倾向" },
+            { id: 19, text: "法律的经济分析视角——用成本—收益框架理解法律——是理解法律制度的最有效方法。", section: "第一部分：理论倾向" },
+            { id: 20, text: "法律是强者的利益。任何法律体系的运行都无法摆脱权力和阶级支配的烙印。", section: "第一部分：理论倾向" },
+            { id: 21, text: "自由与平等是法律必须优先保障的伦理基础，而非仅仅是工具的选项。", section: "第一部分：理论倾向" },
+            { id: 22, text: "法律应当维护社群共同体的核心价值与道德传统，而不应当激进地偏离民众的正义直觉。", section: "第一部分：理论倾向" },
+            { id: 23, text: "法律的效力不依赖于法官或立法机关的外部赋予，而依赖于它能否被社会的内在秩序所接受和运转。", section: "第一部分：理论倾向" },
+            { id: 24, text: "法律推理应当“认真对待权利”——每个个体都有超越功利的道德权利，政府必须平等关怀与尊重每一个公民。", section: "第一部分：理论倾向" },
+            
+            // 第二部分：思维与行动模式（25-40）
+            { id: 25, text: "在讨论法律问题时，我更容易从抽象原则（如公平、尊严）而不是具体后果出发。", section: "第二部分：思维与行动模式" },
+            { id: 26, text: "在分析一个案件时，我倾向先看“法律条文到底说了什么”，而不是“这个结果是否公正”。", section: "第二部分：思维与行动模式" },
+            { id: 27, text: "在判断一个规则的好坏时，我更关心它在现实中产生的实际社会后果。", section: "第二部分：思维与行动模式" },
+            { id: 28, text: "我会倾向于认为法律主张背后往往隐藏着某种阶级利益或群体权力关系。", section: "第二部分：思维与行动模式" },
+            { id: 29, text: "我愿意接受法律的模糊性——把最终裁量权交给法官的平衡感，而不是要求精确、确定的规则。", section: "第二部分：思维与行动模式" },
+            { id: 30, text: "我更偏好清晰、可预测的法律规则，即便它有时导致个案的机械后果。", section: "第二部分：思维与行动模式" },
+            { id: 31, text: "我通常拒绝“唯一正确答案”——法律争议的解决往往取决于观察者的立场和权力关系。", section: "第二部分：思维与行动模式" },
+            { id: 32, text: "我认为法律改革的首要目标应当是提升社会效率，而不是空谈道德正义。", section: "第二部分：思维与行动模式" },
+            { id: 33, text: "面对社会分歧，法律需要维持一种包容性的对话结构，而非强行规定唯一的道德真理。", section: "第二部分：思维与行动模式" },
+            { id: 34, text: "如果让我选择，我宁愿生活在一个法律清晰可靠但偶尔“不近人情”的社会，而不是一个法律模糊但处处灵活调整的社会。", section: "第二部分：思维与行动模式" },
+            { id: 35, text: "我认为在法律中最可怕的事情不是“条文不完全公平”，而是“法律根本不可预测”。", section: "第二部分：思维与行动模式" },
+            { id: 36, text: "在规则执行中，“一视同仁”的重要性超过“因案施策”的灵活性。", section: "第二部分：思维与行动模式" },
+            { id: 37, text: "我对法律改革的态度更偏渐进主义：规则需要在社会中实际磨合，而不应由理论家直接设计。", section: "第二部分：思维与行动模式" },
+            { id: 38, text: "在法律解释中，我更尊重立法原意，而不是法官根据自己的道德感作出的扩张解释。", section: "第二部分：思维与行动模式" },
+            { id: 39, text: "在风险治理中，我倾向于制定高度精确的行政规范来最小化自由裁量带来的不确定性。", section: "第二部分：思维与行动模式" },
+            { id: 40, text: "我看重法律的教育功能和德性引导功能，而不仅仅是其威慑或交易成本降低功能。", section: "第二部分：思维与行动模式" },
+            
+            // 第三部分：社会与法之关系（41-48）
+            { id: 41, text: "法律是社会中的“活法”，其生命力来源于社会行为习惯，而非官方的立法意志。", section: "第三部分：社会与法之关系" },
+            { id: 42, text: "法律判决应当在个案中兼顾当事人的处境，而不机械套用冷冰冰的条款。", section: "第三部分：社会与法之关系" },
+            { id: 43, text: "社会控制是法律的根本功能——法律的主要使命是抑制人性中潜在的越界冲动。", section: "第三部分：社会与法之关系" },
+            { id: 44, text: "我认为法律的尊严有赖于其稳定性：频繁修改法律比保留某些过时条文对法治的损害更大。", section: "第三部分：社会与法之关系" },
+            { id: 45, text: "法律的定义应当包括非国家的社会规范（如行业惯例、社区守则），只要它们能调节社会行为。", section: "第三部分：社会与法之关系" },
+            { id: 46, text: "法律制度最终是一种关于“如何分配权力与资源”的政治制度，而非中立的技术规则集合。", section: "第三部分：社会与法之关系" },
+            { id: 47, text: "法律的教育价值——塑造公民道德观——比其惩罚或补偿功能更为根本。", section: "第三部分：社会与法之关系" },
+            { id: 48, text: "我赞同德沃金的观点：法律解释应当“以最好的方式呈现既有实践”，追求融贯性和整体性的最佳建构。", section: "第三部分：社会与法之关系" }
+        ];
+
+        // 维度题组
+        const dimensions = {
+            A1: [3, 4, 11, 15, 16, 17, 26, 30, 34, 35, 36, 38, 39, 44], // 形式优先
+            A2: [1, 2, 5, 6, 9, 10, 13, 14, 18, 21, 22, 23, 25, 27, 29, 33, 37, 40, 41, 42, 45, 47], // 实质优先
+            B1: [1, 2, 3, 4, 9, 10, 11, 15, 16, 17, 21, 22, 24, 25, 26, 30, 34, 35, 36, 38, 39, 40, 44, 47], // 规范优先
+            B2: [5, 6, 12, 13, 14, 18, 19, 20, 23, 27, 28, 29, 31, 32, 33, 37, 41, 42, 45, 46], // 经验优先
+            C1: [1, 2, 3, 4, 8, 9, 10, 11, 19, 21, 22, 24, 25, 30, 32, 34, 35, 36, 38, 39, 40, 47], // 自由优先
+            C2: [5, 6, 7, 12, 13, 14, 18, 20, 23, 26, 27, 28, 29, 31, 33, 37, 41, 42, 43, 45, 46]  // 社群优先
+        };
+
+        // 类型解析
+        const typeDescriptions = {
+            "法理思辨家": {
+                poetry: "以天理铸法眼，以自由书心篇——黑夜里的星，不因无人仰望而熄灭。",
+                popular: "你是一个理想主义者。对你来说，法律的根本价值在于它是不是公正的，而不仅仅是“有没有写进条文”。你始终相信世界上存在着超越时空的真理、正义和基本人权。当一个国家通过了一个不道德的法律时，你会是第一个站起来说“这不是法律”的人。你热爱自由和权利。在学术和公共辩论中，你习惯从宏大原则出发，善于从道义上批判现有制度的缺陷。你是天生的思想家，行动力和细节操作可能稍逊。",
+                academic: "此类型在主倾向谱系上呈现“实质优先 + 规范优先 + 自由优先”的三重聚合结构。在法理学传统中，这一构型接近于自然法学派中强调自由伦理基础的古典路径，尤其与洛克的社会契约论和当代新自然法学中主张法律与道德具有概念性联系的观点相呼应。此类型的规范优先倾向意味着其法律思维具有强烈的先验维度，倾向于从“法之应然”出发检视实证法的正当性；实质优先则表明其抗拒将法律过度形式化或程序主义化；自由优先则将其关切焦点对准个体权利的保护，符合德沃金所论述的“权利作为王牌”的个体防御模式。然而，此构型也蕴含内在张力：规范优先与经验优先的悬殊差距可能导致其在面对极端复杂的社会事实时出现“正义宣判压倒实质性解决方案”的倾向，即在个案中优先进行道德定性而非寻求可操作的制度安排。"
+            },
+            "综合智者": {
+                poetry: "晨曦洒满老城墙——光辉照见自由，更照见所有人的屋檐。",
+                popular: "你与“法理思辨家”拥有同样的理想主义灵魂，但你对社群和公共善的关怀更胜于对纯粹个体自由的执着。你在乎的不只是哪个权利被保护，而是整个共同体如何共善。你尊重传统、习惯法和文化共识中的智慧，也相信法律除了保护权利，更承担着教化公民、培育德性的使命。你不排斥政府用法律来塑造民众的道德底色。你的最大魅力在于：你是深谙社会脉动的理想主义者，既能仰望星空，也能脚踏实地。你很容易在群体中担任精神协调者或道德顾问。",
+                academic: "此类型在主倾向谱系上呈现“实质优先 + 规范优先 + 社群优先”的三重聚合。这一构型对应的是自然法学派中更倾向于社群主义或亚里士多德式的路径。不同于类型一的洛克式自由自然法传统，此类型更多地受到社群主义对抽象自由主义的批评、以及对共同善的强调的影响。规范优先意味着此类型拒绝将法律还原为经验性的社会事实，坚持法律评价需要诉诸更高的道德坐标；实质优先则确认了其对程序形式主义的疏离。社群优先这一坐标将其引向法律的教育与德性引导功能，强调法律不仅仅是行为边界设定机制，更是公民品格塑造的制度化载体。在当代法理学谱系中，此类型最接近于新自然法学中经由富勒的程序自然法所开启的“法律内在道德”进路，以及菲尼斯所阐发的基于人类繁荣共同善的自然法理论。然而，此类型的社群优先倾向与自由优先之间存在基本的规范性张力，当社群共同体的价值共识与个体的道德自主权发生剧烈冲突时，此类型面临着在“共同善”与“个体权利”之间做出实质性权衡的理论挑战。"
+            },
+            "理性建构师": {
+                poetry: "法的权威不在道德赞颂中——在可预期的每一个明天里。",
+                popular: "你推崇秩序、理性与明晰的规则。你相信法律的生命在于它的可预期性——让每个人都能预知行为的法律后果，是社会自由的真正保障。你不太喜欢道德上的含糊之词，更愿意把精力放在“法律实际说了什么”而非“法律应该如何”。在法律、政治或管理的讨论中，你总是那个坚持“走流程”“看条款”的理性主义者。你不喜欢法官拥有太大的自由裁量权，因为那会增加不确定性。你的思维风格类似于法典工程师。你的盲点在于可能对不正义的成文法过度忠诚。",
+                academic: "此类型在主倾向谱系上呈现“形式优先 + 规范优先 + 自由优先”的三重聚合，是分析实证主义法学在个体倾向维度的最纯粹表达。形式优先意味着此类型将法律形式——即成文规则、程序要件、渊源识别标准——置于法律思维的优先位置，拒绝对法律内容进行道德实质审查。规范优先则使其与激进的经验主义或现实主义拉开距离，坚持法律具有独立于社会事实效力的规范性维度；自由优先则赋予此类型一种以规则导向为基础的自由主义底色，强调法律的可预见性本身就是对个体行动自由的最大保障。在法理学谱系中，这一构型最接近哈特的“新分析法学”路径——通过“承认规则”的社会渊源测试来界定法的效力，但保留了法律作为规范性实践的尊严。此类型对形式优先的执着遵循凯尔森所确立的纯粹法学方法论，主张将法理学从心理学、社会学和伦理学的异质性侵入中彻底净化。然而，此类型的内在脆弱性在于，当实证法体系整体性地背离基本正义时，其对法律形式效力的忠诚可能面临哈特—富勒论辩中“最低限度自然法”的修正压力。"
+            },
+            "规范执行者": {
+                poetry: "河流不需歌唱源头，只承诺奔涌入海的确定路径。",
+                popular: "你拥有强大的“依法办事”基因，但你的忠诚不只针对抽象条文，还针对维系社会秩序的权威与共同体传统。你比“理性建构师”更关注法律的稳定性和连续性——你宁可保留一个有些陈旧的规则，也厌恶频繁的革新破坏法律体系的可预测性。在你的世界观中，法律是社会稳定的大锚。当讨论国家安全、公共秩序或社区治理时，你比任何人都更重视制度的权威形象。你不是冷血的法律机器——你真的相信维护既定规则就是对社会最好的服务。你的缺点是可能过度尊重传统权威，对新观念持有保守倾向。",
+                academic: "此类型在主倾向谱系上呈现“形式优先 + 规范优先 + 社群优先”的三重聚合，在法理学传统中可追溯至分析实证主义与保守主义法治理念的结合。与类型三不同，此类型的社群优先倾向使其对法律的忠诚不限于抽象规范形式本身，而是通过制度稳定性和社会秩序的保存价值来确证法律的正当性。此类型倾向于将法律视为维持社会纽带的“沉默契约”，而非个体权利的纯粹防御工具。规范优先意味着其拒绝将法律实践还原为纯粹的社会权力博弈或经验观察，而形式优先则确认了对司法自由裁量权的系统性不信任。在理论谱系中，此类型与拉兹所论述的“服务型权威观”具有高度的亲和性——法律的权威不是因为它表达了善，而是因为它提供了对社会协调有益的决定性指引。此类型也可以被视为梅因“从身份到契约”的批判性注脚：在契约泛滥的时代，此类型反而重申了身份所承载的制度稳定性价值。"
+            },
+            "社会洞察家": {
+                poetry: "让法律走出象牙塔，披上尘土和炊烟——在街头巷尾找到它的重量。",
+                popular: "你视法律为社会的产物，而非悬在空中的哲理。你不太在意法律“是否合乎永恒正义”，也不迷恋法条逻辑的自洽性，你最关心的是“这条法律在真实的世界里到底起了什么作用”。你对社会学、统计学和田野调查充满亲切感。你热衷于考察法律在执行过程中如何被社会习俗、经济条件和官僚运作方式所扭曲或重塑。你敏锐、务实、接地气，能够抓住制度运行的“潜规则”。你不认同那种把法官当成自动售法机式的程序主义，你相信司法活动应当关注社会效果的真正平衡。你最大的挑战在于可能在狂热的社会洞察中迷失法律的规范性内核。",
+                academic: "此类型在主倾向谱系上呈现“实质优先 + 经验优先 + 自由优先”的三重聚合，其经验优先倾向构成了与规范优先诸类型的根本分野。经验优先意味着此类型将法律的有效性锚定在“法律行动中的实际效果”——而非先验的道德原则或形式的程序正当性——作为法律评判的核心基准。在法律社会学传统中，这一构型与埃利希所提出的“活法”理论最为接近：支配社会生活的法律，很大程度上来自联合体的内在秩序，而非立法机关或司法判决的权威宣示。实质优先则意味着此类型并未滑向极端的价值虚无主义，仍在经验发现的尽头保留了“究竟什么社会效果是好的”这一实质性价值追问。自由优先则将此类型的落脚点置于个体在经验社会中的福祉最大化，呼应了庞德“通过法律的社会工程”和利益平衡理论中以个体利益整合为社会利益的方法论。此类型的显著张力在于经验优先与形式优先之间：过度的经验主义可能导致法律的可预期性受损，使“行动中的法”的灵活性以牺牲“规则中的法”的稳定性为代价。"
+            },
+            "社会工程者": {
+                poetry: "不要完美的天平，只要在每一块矛盾的土地上，种下和解的苗。",
+                popular: "你是法理世界中最务实的“问题解决者”。法律的效用对你来说既不是漂亮的道德修辞，也不是一丝不苟的条文逻辑，而是“能不能解决问题”。你可能出身于公共管理、社会工作或商业咨询背景。你崇尚社会利益的最大化，愿意在冲突的利益中进行精算与权衡。你不回避模糊地带——对你而言，好的法律恰恰在于有能力在不确定中寻找最优的社会安排。你擅长在多方利益中找到妥协的平衡点。你的典型风格是把法律视为调整社会关系的一种政策工具。你的短板在于，过分强调社会总效益可能让你忽视弱势群体的具体权利。",
+                academic: "此类型在主倾向谱系上呈现“实质优先 + 经验优先 + 社群优先”的三重聚合，是社会学法学中以“社会利益整合”和“社会工程论”为核心意象的人格化呈现。与类型五的自由个人主义进路不同，此类型的社群优先意味着其更倾向于将个体利益视为社会利益的子集，并因此在利益冲突的天平上赋予社会整体福利以优先权重。实质优先确认了此类型对社会效果的实质性评价——即存在一个超越纯粹程序的标准来衡量法律的优劣；经验优先则将其研究方法导向社会学和公共政策的实证路径，而非规范法学的逻辑分析。在理论谱系中，此类型与庞德的“社会控制论”和“社会利益说”具有最直接的亲缘性。此类型采取一种功能主义的法律观：法律制度是一种社会控制手段，其目的不是表达形而上学的正义或逻辑的自洽性，而是要在最小社会成本的前提下满足最大化的人类需求。此类型面临的核心困境在于：当社会利益概念被赋予压倒性的优先地位时，个体权利可能沦为“利益清单”中可被交易的条目，此即德沃金在《认真对待权利》中对功利主义进路的核心批评所在。"
+            },
+            "批判反思者": {
+                poetry: "将法律的铠甲脱下，看看谁的手握剑柄，谁的手被镣铐锁住。",
+                popular: "你拥有一个“解构者”的灵魂。你对一切制度化的权威保持冷静的怀疑——包括法律本身。你认为所谓的法律中立、形式正义、司法客观性都是一种掩盖权力运作的意识形态修辞。在你的视野中，任何法律判决的背后都隐藏着特定的阶级立场、种族预设或性别偏见。你敏锐、犀利、批判力极强，是制度的“照妖镜”。你是天生的理论批判家，拒绝任何体系封闭的自洽性宣称。对你来说，法律的不确定性本身就是一种政治资源，而不是缺陷。你的弱点是过于强调解构而疲于建构，长期处于“除了批判什么都没有”的状态。你可能在某些场合被认为是愤世嫉俗者。",
+                academic: "此类型在主倾向谱系上呈现“形式优先 + 经验优先 + 自由优先”的三重聚合，是批判法学（Critical Legal Studies）在人格倾向维度上的最具辨识度的投射。形式优先在此类型中并非意味着对法律规则的信仰，恰恰相反，此类型中的“形式优先”实质上是法律形式主义的反射性认同——通过精确把握法律规则结构的逻辑闭合性来揭示其内在矛盾与意识形态缝隙。经验优先则使此类型与批判法学对法律现实主义的继承保持接续：法律的运作应当通过权力分析、阶级分析和性别分析等经验性方法加以破译，而非在规范层面予以神圣化。自由优先在此类型中呈现为一种否定性的自由概念——即通过解构权威和去自然化主流叙事来捍卫个体不受制度规训的空间。在理论谱系中，此类型的核心主张与邓肯·肯尼迪、昂格尔和图什内特等批判法学家关于“法律论证的不确定性命题”高度吻合：法律推理无法产生唯一正确的结果，任何裁判都伴随着政治选择。此类型的内在危机在于其解构主义的彻底性可能消解法律作为社会整合媒介的可能性本身，从而导致“批判走向自我吞噬”。"
+            },
+            "效率校准者": {
+                poetry: "法律的尊严不写在石板上——写在市场每一笔可预见的交换里。",
+                popular: "你的法律世界观是最具“工程思维”的。你讨厌空洞的价值口号，也怀疑社会学式的模糊考量。对你来说，法律是一个巨大的激励机制系统——好的法律必须降低社会交易成本，而不是增加内耗。你把法律看作市场的护航者，法律制度的核心目标是经济效率。你在分析任何法律问题时，会自动在心里换算成“如果这样做，社会总成本会增加还是减少”。你冷静、理性、精于计算，既不像法理思辨家那样追求理想主义的高蹈，也不像批判反思者那样批判权力的阴险。你看似冷漠，但你的目标其实非常清晰——最大化的社会效用。你的盲点是可能以效率之名遮蔽了分配正义的价值。",
+                academic: "此类型在主倾向谱系上呈现“形式优先 + 经验优先 + 社群优先”的三重聚合，是法律经济学（Law and Economics）运动所塑造的“经济人”法律思维的人格化表达。形式优先在此类型中表现为对法律规则的稳定性、可计算性和形式理性（即马克斯·韦伯所界定范畴）的高度依赖——这是法律作为激励机制发挥作用的前提条件。经验优先则使其将法律规范的有效性锚定在经验性的成本—收益分析框架内，而非诉诸先验的道德原则或社群的传统权威；社群优先则将其关注焦点锁定在社会总福利或帕累托效率这类集体性度量上。在理论谱系中，此类型与波斯纳所倡导的“财富最大化”作为司法裁判指导原则的法经济学核心纲领高度契合。此类型采取一种分析还原主义的立场：将法律争议约化为经济学问题的可能性，使效率标准成为法律制度评判的终极基准。然而，此类型面临最深刻的批评来自两个方向——在规范层面，它可能以效率之名遮蔽分配正义的独立价值；在方法论层面，将法律完全约化为效率计算忽略了法律制度固有的规范性维度，即法律不仅是社会资源分配方案，也是关于“何为正当”的公共论证空间。"
+            }
+        };
+
+        // 主类型映射
+        const mainTypes = {
+            "实质-规范-自由": "法理思辨家",
+            "实质-规范-社群": "综合智者",
+            "形式-规范-自由": "理性建构师",
+            "形式-规范-社群": "规范执行者",
+            "实质-经验-自由": "社会洞察家",
+            "实质-经验-社群": "社会工程者",
+            "形式-经验-自由": "批判反思者",
+            "形式-经验-社群": "效率校准者"
+        };
+
+        // 全局变量
+        let currentQuestion = 0;
+        const answers = {};
+        let testStarted = false;
+
+        // DOM元素
+        const startBtn = document.getElementById('start-btn');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const submitBtn = document.getElementById('submit-btn');
+        const restartBtn = document.getElementById('restart-btn');
+        const questionContainer = document.getElementById('question-container');
+        const navButtons = document.getElementById('nav-buttons');
+        const questionnaire = document.getElementById('questionnaire');
+        const results = document.getElementById('results');
+        const progressBar = document.getElementById('progress-bar');
+        const progressText = document.getElementById('progress-text');
+        const progressPercent = document.getElementById('progress-percent');
+        const menuToggle = document.getElementById('menu-toggle');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        // 移动端菜单切换
+        menuToggle.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    window.scrollTo({
+                        top: target.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                    // 关闭移动端菜单
+                    mobileMenu.classList.add('hidden');
+                }
+            });
+        });
+
+        // 开始答题
+        startBtn.addEventListener('click', () => {
+            testStarted = true;
+            startBtn.parentElement.classList.add('hidden');
+            navButtons.classList.remove('hidden');
+            loadQuestion(currentQuestion);
+            updateProgress();
+        });
+
+        // 上一题
+        prevBtn.addEventListener('click', () => {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                loadQuestion(currentQuestion);
+                updateProgress();
+            }
+        });
+
+        // 下一题
+        nextBtn.addEventListener('click', () => {
+            if (currentQuestion < questions.length - 1) {
+                // 检查是否已回答当前问题
+                if (!answers[questions[currentQuestion].id]) {
+                    alert('请先回答当前问题');
+                    return;
+                }
+                
+                currentQuestion++;
+                loadQuestion(currentQuestion);
+                updateProgress();
+                
+                // 显示提交按钮在最后一题
+                if (currentQuestion === questions.length - 1) {
+                    nextBtn.classList.add('hidden');
+                    submitBtn.classList.remove('hidden');
+                }
+            }
+        });
+
+        // 提交测评
+        submitBtn.addEventListener('click', () => {
+            // 检查是否已回答当前问题
+            if (!answers[questions[currentQuestion].id]) {
+                alert('请先回答当前问题');
+                return;
+            }
+            
+            // 计算结果
+            calculateResults();
+            
+            // 显示结果
+            questionnaire.classList.add('hidden');
+            results.classList.remove('hidden');
+            
+            // 滚动到结果顶部
+            window.scrollTo({
+                top: results.offsetTop - 100,
+                behavior: 'smooth'
+            });
+        });
+
+        // 重新测试
+        restartBtn.addEventListener('click', () => {
+            // 重置状态
+            currentQuestion = 0;
+            Object.keys(answers).forEach(key => delete answers[key]);
+            testStarted = false;
+            
+            // 重置UI
+            results.classList.add('hidden');
+            questionnaire.classList.remove('hidden');
+            startBtn.parentElement.classList.remove('hidden');
+            navButtons.classList.add('hidden');
+            nextBtn.classList.remove('hidden');
+            submitBtn.classList.add('hidden');
+            progressBar.style.width = '0%';
+            progressText.textContent = '第一部分：理论倾向 (1-12题)';
+            progressPercent.textContent = '0%';
+            
+            // 滚动到问卷顶部
+            window.scrollTo({
+                top: questionnaire.offsetTop - 100,
+                behavior: 'smooth'
+            });
+        });
+
+        // 加载问题
+        function loadQuestion(index) {
+            const question = questions[index];
+            questionContainer.innerHTML = `
+                <div class="mb-6">
+                    <span class="inline-block bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-medium mb-4">${question.section}</span>
+                    <h3 class="text-xl font-semibold mb-6">
+                        <span class="text-primary font-bold mr-2">${question.id}.</span>
+                        ${question.text}
+                    </h3>
+                </div>
+                <div class="grid grid-cols-6 gap-2 md:gap-4">
+                    ${[1, 2, 3, 4, 5, 6].map(score => `
+                        <button 
+                            class="score-btn flex flex-col items-center justify-center p-3 md:p-4 rounded-lg border-2 transition-custom ${answers[question.id] === score ? 'border-primary bg-primary/5' : 'border-gray-200 hover:border-primary/50'}"
+                            data-score="${score}"
+                        >
+                            <span class="text-xl md:text-2xl font-bold ${answers[question.id] === score ? 'text-primary' : 'text-gray-600'}">${score}</span>
+                            <span class="text-xs mt-1 text-center ${answers[question.id] === score ? 'text-primary font-medium' : 'text-gray-500'}">
+                                ${score === 1 ? '完全<br>不同意' : 
+                                  score === 2 ? '比较<br>不同意' : 
+                                  score === 3 ? '略微<br>不同意' : 
+                                  score === 4 ? '略微<br>同意' : 
+                                  score === 5 ? '比较<br>同意' : '完全<br>同意'}
+                            </span>
+                        </button>
+                    `).join('')}
+                </div>
+            `;
+
+            // 添加评分按钮事件
+            document.querySelectorAll('.score-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const score = parseInt(btn.dataset.score);
+                    answers[question.id] = score;
+                    
+                    // 更新UI
+                    document.querySelectorAll('.score-btn').forEach(b => {
+                        b.classList.remove('border-primary', 'bg-primary/5');
+                        b.classList.add('border-gray-200', 'hover:border-primary/50');
+                        b.querySelector('span:first-child').classList.remove('text-primary');
+                        b.querySelector('span:first-child').classList.add('text-gray-600');
+                        b.querySelector('span:last-child').classList.remove('text-primary', 'font-medium');
+                        b.querySelector('span:last-child').classList.add('text-gray-500');
+                    });
+                    
+                    btn.classList.remove('border-gray-200', 'hover:border-primary/50');
+                    btn.classList.add('border-primary', 'bg-primary/5');
+                    btn.querySelector('span:first-child').classList.remove('text-gray-600');
+                    btn.querySelector('span:first-child').classList.add('text-primary');
+                    btn.querySelector('span:last-child').classList.remove('text-gray-500');
+                    btn.querySelector('span:last-child').classList.add('text-primary', 'font-medium');
+                });
+            });
+
+            // 如果已经回答过，高亮对应的按钮
+            if (answers[question.id]) {
+                const selectedBtn = document.querySelector(`.score-btn[data-score="${answers[question.id]}"]`);
+                if (selectedBtn) {
+                    selectedBtn.click();
+                }
+            }
+
+            // 更新上一题按钮状态
+            prevBtn.disabled = currentQuestion === 0;
+            prevBtn.classList.toggle('opacity-50', currentQuestion === 0);
+            prevBtn.classList.toggle('cursor-not-allowed', currentQuestion === 0);
+        }
+
+        // 更新进度
+        function updateProgress() {
+            const progress = ((currentQuestion + 1) / questions.length) * 100;
+            progressBar.style.width = `${progress}%`;
+            progressPercent.textContent = `${Math.round(progress)}%`;
+            
+            // 更新进度文本
+            const question = questions[currentQuestion];
+            let sectionRange = '';
+            if (currentQuestion < 12) {
+                sectionRange = '(1-12题)';
+            } else if (currentQuestion < 24) {
+                sectionRange = '(13-24题)';
+            } else if (currentQuestion < 32) {
+                sectionRange = '(25-32题)';
+            } else if (currentQuestion < 40) {
+                sectionRange = '(33-40题)';
+            } else {
+                sectionRange = '(41-48题)';
+            }
+            progressText.textContent = `${question.section} ${sectionRange}`;
+        }
+
+        // 计算结果
+        function calculateResults() {
+            // 计算各维度分数
+            const scores = {
+                A1: calculateDimensionScore(dimensions.A1),
+                A2: calculateDimensionScore(dimensions.A2),
+                B1: calculateDimensionScore(dimensions.B1),
+                B2: calculateDimensionScore(dimensions.B2),
+                C1: calculateDimensionScore(dimensions.C1),
+                C2: calculateDimensionScore(dimensions.C2)
+            };
+
+            // 确定维度倾向
+            const dimA = scores.A1 > scores.A2 ? '形式' : '实质';
+            const dimB = scores.B1 > scores.B2 ? '规范' : '经验';
+            const dimC = scores.C1 > scores.C2 ? '自由' : '社群';
+
+            // 计算维度百分比
+            const dimAPercent = (scores.A1 / (scores.A1 + scores.A2)) * 100;
+            const dimBPercent = (scores.B1 / (scores.B1 + scores.B2)) * 100;
+            const dimCPercent = (scores.C1 / (scores.C1 + scores.C2)) * 100;
+
+            // 更新维度条
+            document.getElementById('dim-a-bar').style.width = `${dimAPercent}%`;
+            document.getElementById('dim-b-bar').style.width = `${dimBPercent}%`;
+            document.getElementById('dim-c-bar').style.width = `${dimCPercent}%`;
+
+            // 更新维度结果文本
+            document.getElementById('dim-a-result').textContent = `${dimA}优先 (${Math.abs(scores.A1 - scores.A2)}分)`;
+            document.getElementById('dim-b-result').textContent = `${dimB}优先 (${Math.abs(scores.B1 - scores.B2)}分)`;
+            document.getElementById('dim-c-result').textContent = `${dimC}优先 (${Math.abs(scores.C1 - scores.C2)}分)`;
+
+            // 确定主类型
+            const typeKey = `${dimA}-${dimB}-${dimC}`;
+            const mainType = mainTypes[typeKey];
+            
+            // 更新主类型
+            document.getElementById('main-type').textContent = mainType;
+            
+            // 更新类型解析
+            const description = typeDescriptions[mainType];
+            document.getElementById('type-poetry').textContent = description.poetry;
+            document.getElementById('type-popular').textContent = description.popular;
+            document.getElementById('type-academic').textContent = description.academic;
+
+            // 信效度验证
+            const validationResults = [];
+            
+            // 测谎题校验
+            const q11 = answers[11];
+            const q16 = answers[16];
+            if (q11 >= 5 && q16 >= 5) {
+                validationResults.push('⚠️ 测谎题校验：您极端倾向于实证主义但没有任何保留条件，建议核查是否存在"社会赞许性反应"');
+            } else {
+                validationResults.push('✅ 测谎题校验：通过');
+            }
+
+            // 奇偶数题一致性检验
+            let oddScore = 0;
+            let evenScore = 0;
+            questions.forEach((q, index) => {
+                if ((index + 1) % 2 === 1) {
+                    oddScore += answers[q.id] || 0;
+                } else {
+                    evenScore += answers[q.id] || 0;
+                }
+            });
+            
+            const diff = Math.abs(oddScore - evenScore);
+            if (diff >= 36) {
+                validationResults.push(`⚠️ 奇偶数题一致性检验：差值为${diff}分(≥36分)，可能存在随机作答`);
+            } else {
+                validationResults.push(`✅ 奇偶数题一致性检验：通过(差值${diff}分)`);
+            }
+
+            // 总分诊断
+            const totalScore = Object.values(answers).reduce((sum, score) => sum + score, 0);
+            if (totalScore <= 144) {
+                validationResults.push(`⚠️ 总分诊断：${totalScore}分(≤144分)，可能存在"弃权倾向"`);
+            } else if (totalScore >= 240) {
+                validationResults.push(`⚠️ 总分诊断：${totalScore}分(≥240分)，可能存在"极端确认倾向"`);
+            } else {
+                validationResults.push(`✅ 总分诊断：${totalScore}分，处于正常范围`);
+            }
+
+            // 更新验证结果
+            const validationList = document.getElementById('validation-results');
+            validationList.innerHTML = '';
+            validationResults.forEach(result => {
+                const li = document.createElement('li');
+                li.innerHTML = result;
+                validationList.appendChild(li);
+            });
+        }
+
+        // 计算维度分数
+        function calculateDimensionScore(questionIds) {
+            return questionIds.reduce((sum, id) => sum + (answers[id] || 0), 0);
+        }
+
+        // 导航栏滚动效果
+        window.addEventListener('scroll', () => {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 50) {
+                nav.classList.add('py-2');
+                nav.classList.remove('py-3');
+                nav.classList.add('bg-primary/95');
+                nav.classList.add('backdrop-blur-sm');
+            } else {
+                nav.classList.add('py-3');
+                nav.classList.remove('py-2');
+                nav.classList.remove('bg-primary/95');
+                nav.classList.remove('backdrop-blur-sm');
+            }
+        });
+    </script>
+</body>
+</html>
