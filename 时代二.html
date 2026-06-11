@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>时代二 · 人生选择模拟器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", sans-serif;
+        }
+
+        body {
+            background: #111;
+            color: #fff;
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 0 15px;
+        }
+
+        .story-box {
+            background: #1a1a1a;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .scene {
+            font-size: 14px;
+            color: #aaa;
+            margin-bottom: 10px;
+        }
+
+        .content {
+            font-size: 18px;
+            margin-bottom: 25px;
+        }
+
+        .dialogue {
+            color: #ffcc00;
+            margin: 10px 0;
+        }
+
+        .narration {
+            color: #ccc;
+            margin: 10px 0;
+            font-style: italic;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option {
+            background: #2a2a2a;
+            border: 1px solid #444;
+            padding: 14px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 16px;
+        }
+
+        .option:hover {
+            background: #3a3a3a;
+            border-color: #00aaff;
+        }
+
+        .ending {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .ending-title {
+            font-size: 24px;
+            color: #ff6666;
+            margin-bottom: 20px;
+        }
+
+        .ending-text {
+            font-size: 17px;
+            line-height: 2;
+            margin-bottom: 30px;
+            white-space: pre-line;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 25px;
+            background: #0077cc;
+            color: #fff;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 0 10px;
+        }
+
+        .btn:hover {
+            background: #0088ee;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 主线选择 -->
+        <div id="main" class="story-box">
+            <div class="content">时代二 · 人生选择模拟器<br>请选择你的人生道路：</div>
+            <div class="options">
+                <div class="option" onclick="startA()">A. 报考选调生，去贫困村</div>
+                <div class="option" onclick="startB()">B. 学医，进入医院</div>
+                <div class="option" onclick="startC()">C. 参军，去边疆</div>
+                <div class="option" onclick="startD()">D. 做快递员，留在武汉</div>
+            </div>
+        </div>
+
+        <!-- 剧情容器 -->
+        <div id="story" class="story-box hidden">
+            <div class="scene" id="scene"></div>
+            <div class="content" id="content"></div>
+            <div class="options" id="options"></div>
+        </div>
+
+        <!-- 结局容器 -->
+        <div id="ending" class="ending hidden">
+            <div class="ending-title" id="ending-title"></div>
+            <div class="ending-text" id="ending-text"></div>
+            <div class="btn" onclick="restart()">重新开始</div>
+            <div class="btn" onclick="backMain()">返回选时代</div>
+        </div>
+    </div>
+
+    <script>
+        let currentPath = "";
+        let node = 0;
+
+        // 判词库
+        const verdicts = {
+            // 黄文秀
+            wwx_true: "在这个世界里，你是——黄文秀。\n你从北京师范大学硕士毕业，放弃大城市工作，回到家乡广西百色。\n你说：‘我是从贫困山区出来的，我就是要回来的人。’\n你用了1年零2个月，让全村88户418人脱贫。你帮村里修了路，建了电商服务站。\n2019年6月16日深夜，暴雨如注。你刚看望病重父亲，却惦记村里的灾情，毅然开车返回。\n路上山洪暴发，你的生命定格在30岁。\n你的电脑桌面是一张洪水淹没的玉米地照片，备注写着：‘我还不够勇敢。’\n不，你已经足够勇敢。你是脱贫攻坚路上最美的朝霞，你是新时代青年的榜样。",
+            wwx_branch: "你在贫困村干了一年，修了路，引了水，孩子们叫你‘书记哥哥/姐姐’。\n你活着看到了村子脱贫的那一天，然后调去了另一个更偏远的村。\n你没有成为黄文秀，但你和她走在同一条路上。\n不是每个人都要被洪水带走，但每一个在土地上流汗的人，都值得被记住。",
+            
+            // 钟南山
+            zns_true: "在这个世界里，你是——钟南山。\n2003年，非典肆虐，你说：‘把最重的病人都送到我这里来。’\n2020年，新冠爆发，84岁的你一边告诉大家‘不要去武汉’，一边自己挤上高铁餐车，逆行赶往武汉。\n你在高铁上闭目休息的照片，让无数人泪目。\n你哽咽着说：‘武汉本来就是一座英雄的城市。’\n大国重器，国士无双。你不仅是一个医生，你是一面旗帜——告诉所有人：不要怕，有我们在。",
+            doctor_branch: "你穿上防护服，在隔离病房一待就是8个小时，脸上全是勒痕。\n媒体没有争相报道你，但你和闪光灯下的人穿着一样的白大褂，面对一样的病毒，听到一样由衷的感谢。\n可是，英雄不只站在光里，每一位从鬼门关捞出人命的医护人，都是群众在濒死关头的‘神’。",
+            
+            // 陈祥榕
+            cxr_true: "在这个世界里，你是——陈祥榕。\n你出生于福建屏南，高中毕业后报名参军，说：‘要去就去最艰苦的地方。’\n你到了新疆军区，海拔5000米以上的边防连。\n2020年6月，加勒万河谷，外军越线挑衅。你作为盾牌手冲在最前面，战斗到生命最后一刻。\n牺牲时，你才19岁。\n你的头盔里有一张纸条，写着：‘清澈的爱，只为中国。’\n你的爱，像昆仑山的雪，干干净净；你的生命，像高原的星，短暂而明亮。",
+            soldier_normal: "你穿着军装，在哨位上站了两年岗，没有打过仗，没有立过功。\n你退伍那天，对着国旗敬了一个长长的军礼。\n你没有成为陈祥榕，但你和他穿着一样的迷彩，守着一样的国境线。\n和平年代的军人，有时候最大的贡献就是没有故事发生。但每一个平安的夜晚，都有你们睁着的眼睛。",
+            
+            // 汪勇
+            wy_true: "在这个世界里，你是——汪勇。\n你是武汉一个普通的顺丰快递员，月薪几千块。\n2020年1月23日，武汉封城。你看到护士在朋友圈哭着说‘走路上班要4个小时’，你决定开车去接她。\n你从一个人变成一支车队，你协调防护物资、解决医护人员吃饭、修眼镜、买拖鞋……你成了‘生命摆渡人’。\n你说：‘我只想做一点力所能及的事。’\n国家给你记了一等功，你却说：‘这份荣誉属于所有志愿者。’\n你让我们相信：平凡人也可以成为英雄。英雄不是天生的，是选择出来的。",
+            
+            // 张浩
+            zh_true: "在这个世界里，你是——张浩。\n你是武汉一名普通的快递员。疫情爆发后，你每天骑着电动车穿梭在空荡荡的街道上，为封闭小区的居民送米送药。\n2020年2月，你感到不适，确诊感染新冠。你给站长发消息：‘我可能回不来了，帮我照顾好我的片区。’\n几天后，你永远闭上了眼睛。\n你的同事们擦干眼泪，继续送货。\n你倒在了平凡的岗位上，但你的车轮碾过的每一条路，都是生命通道。你没有被遗忘——每年的樱花，都替你开。",
+            express_normal: "你送完最后一单快递，回到家洗手、消毒，然后给父母打个电话说‘我很好’。\n你没有成为张浩，但你和他一样，在最危险的时候没有退缩。\n活着，就是最大的胜利。继续好好送货，好好生活，这就是对他最好的纪念。"
+        };
+
+        // 工具函数
+        function showStory() {
+            document.getElementById("main").classList.add("hidden");
+            document.getElementById("story").classList.remove("hidden");
+            document.getElementById("ending").classList.add("hidden");
+        }
+
+        function showEnding(title, text) {
+            document.getElementById("story").classList.add("hidden");
+            document.getElementById("ending").classList.remove("hidden");
+            document.getElementById("ending-title").innerText = title;
+            document.getElementById("ending-text").innerText = text;
+        }
+
+        function setScene(scene, content, optionsHTML) {
+            document.getElementById("scene").innerText = scene;
+            document.getElementById("content").innerHTML = content;
+            document.getElementById("options").innerHTML = optionsHTML;
+        }
+
+        function restart() {
+            node = 0;
+            if (currentPath === "A") startA();
+            else if (currentPath === "B") startB();
+            else if (currentPath === "C") startC();
+            else if (currentPath === "D") startD();
+        }
+
+        function backMain() {
+            document.getElementById("main").classList.remove("hidden");
+            document.getElementById("story").classList.add("hidden");
+            document.getElementById("ending").classList.add("hidden");
+            currentPath = "";
+            node = 0;
+        }
+
+        // ------------------------------
+        // A路径：选调生 / 黄文秀线
+        // ------------------------------
+        function startA() {
+            currentPath = "A";
+            node = 0;
+            showStory();
+            A0();
+        }
+
+        function A0() {
+            setScene("节点0：开篇（共通）", `
+                画面：大学毕业典礼，学位帽抛起。画面分屏四部分，切换至你单独站在岔路口：一边是高楼大厦的城市，一边是山间小路。你背包上挂着一本《习近平的七年知青岁月》。一辆班车驶来，门打开。<br>
+                <span class="narration">旁白：2015年夏天，你做出了一个让同学们惊讶的决定——不去大城市，去贫困村。他们说‘你是不是傻’，你笑笑没回答。你知道，有些事总得有人去做。</span>
+            `, `<div class="option" onclick="A1()">已选择A，进入驻村线</div>`);
+        }
+
+        function A1() {
+            node = 1;
+            setScene("节点1：进村第一天（沉浸）", `
+                画面：你坐班车进山，窗外从城市变成梯田，最后是泥泞的村道。司机回头：“大学生，前面就是高塘村了。”你下车，看见村口几个老人蹲在墙根，用方言嘀咕：“又来一个镀金的，待不了几天。”村支书老杨迎上来，接过你的行李：“走，先到村委会歇脚。”村委会是两间土房，墙皮剥落，桌子上放着半包烟和一本破旧的贫困户花名册。<br>
+                <span class="narration">旁白：高塘村，人均年收入2800元，贫困发生率32%。你是第4个被派来的驻村干部，前三个都走了。老杨带你走进那间漏雨的房间，铺盖一卷：‘你就住这吧。’</span>
+            `, `
+                <div class="option" onclick="A2('你一分钟都不想等。')">A. 放下行李，立刻让老杨带你去走访第一户</div>
+                <div class="option" onclick="A2('你想，得先安顿下来，才能打持久战。')">B. 先整理房间，把带来的书摆好</div>
+                <div class="option" onclick="A2('你忽然有点想家，但很快甩甩头。')">C. 站在村口，望着远山发了一会儿呆</div>
+            `);
+        }
+
+        function A2(note) {
+            node = 2;
+            setScene("节点2：走访老李家（关键准备）", `
+                <span class="narration">旁白：${note}</span><br>
+                画面：老杨带你走到一户木瓦房前，门口堆着柴火。一个中年男人蹲在门槛上抽烟，墙边一个女孩（约14岁）正在喂猪。老杨喊：“老李，新来的书记看你来了。”老李没起身，冷冷说：“又是来劝我女儿读书的？我跟你说过，我家供不起。”女孩抬头看你一眼，又低下头。<br>
+                <span class="narration">旁白：老李的女儿叫李小花，成绩在全镇排前三。但老李妻子常年生病，家里就他一个劳动力。他不想让女儿读书，想让她早点嫁人换彩礼。你深吸一口气。</span>
+            `, `
+                <div class="option" onclick="A3()">A. 直接跟老李说‘义务教育是国家规定，不让孩子上学违法’（强硬）</div>
+                <div class="option" onclick="A3()">B. 蹲下来跟老李聊家常，问问他家里的困难（温和）</div>
+                <div class="option" onclick="A3()">C. 先找小花单独聊，了解她的想法（迂回）</div>
+            `);
+        }
+
+        function A3() {
+            node = 3;
+            setScene("节点3：一年后的改变（沉浸）", `
+                画面：你经过无数次上门，帮老李联系医院看病，给他申请了低保，又联系学校给小花免了学杂费。小花终于回到课堂。村里其他几户人家也开始信任你。你帮村子修了一条水泥路，组织村民种砂糖橘。镜头快剪：你满头大汗搬水泥、你深夜在灯下写报告、你教村民用手机直播卖橘子。<br>
+                <span class="narration">旁白：一年过去了，你黑了，瘦了，但村子变了。路修通了，橘子卖出去了，小花考上了县里的重点高中。老李第一次请你到家里吃饭，他端起酒杯说：‘书记，以前是我不对，谢谢你。’</span>
+            `, `
+                <div class="option" onclick="A4()">A. 喝下那杯酒，笑了（你觉得一切都值了）</div>
+                <div class="option" onclick="A4()">B. 摆摆手说‘这是大家一起干的’（你不居功）</div>
+                <div class="option" onclick="A4()">C. 偷偷抹了一下眼角（有点想哭）</div>
+            `);
+        }
+
+        function A4() {
+            node = 4;
+            setScene("节点4：暴雨之夜（★ 决定结局）", `
+                画面：2019年6月16日深夜，你刚回到老家看望病重的父亲。窗外暴雨如注，闪电照亮房间。手机突然响起，村里文书焦急喊：“书记！山洪预警，下游还有几户人家没转移！你什么时候回来？”你看着病床上的父亲，他睡着了，手还拉着你的衣角。你站起身，又坐下。<br>
+                <span class="narration">旁白：你刚赶到家不到两个小时。父亲做完手术才三天。但你心里清楚，下游那十几户人家，老弱妇孺，如果没人组织转移……你咬着嘴唇。</span>
+            `, `
+                <div class="option" onclick="showEnding('【结局】黄文秀真相线', verdicts.wwx_true)">A. 冒雨开车返回</div>
+                <div class="option" onclick="showEnding('【结局】黄文秀分支线', verdicts.wwx_branch)">B. 打电话通知村干部组织转移，天亮再走</div>
+            `);
+        }
+
+        // ------------------------------
+        // B路径：学医 / 钟南山线
+        // ------------------------------
+        function startB() {
+            currentPath = "B";
+            node = 0;
+            showStory();
+            B0();
+        }
+
+        function B0() {
+            setScene("节点0：开篇（共通）", `
+                画面：大学毕业典礼，学位帽抛向空中。你穿着白大褂（象征医学生）站在医学院楼前，手里握着毕业证书。镜头切到医院走廊，你第一次穿上白大褂，胸前挂着“实习医生”的牌子。<br>
+                <span class="narration">旁白：你选择了学医。五年的苦读，无数个通宵的夜晚，你终于穿上了这件白大褂。但你知道，真正的考试，从今天才开始。</span>
+            `, `<div class="option" onclick="B1()">进入学医线</div>`);
+        }
+
+        function B1() {
+            node = 1;
+            setScene("节点1：入职第一天（沉浸）", `
+                画面：你被分配到呼吸科，跟着带教老师查房。病房里，一个老慢支病人拉着你的手：“医生，我喘不上气……”你有点手足无措，老师替你解围。中午，你在更衣室对着镜子整理白大褂，心里又紧张又自豪。手机响了，是妈妈发来的消息：“孩子，当医生累不累？照顾好自己。”<br>
+                <span class="narration">旁白：查房、写病历、值夜班……你开始明白，课本上的知识只是冰山一角。每个病人的眼神里，都写满了信任和期待。</span>
+            `, `
+                <div class="option" onclick="B2()">A. 给妈妈回电话：“妈，我挺好的”</div>
+                <div class="option" onclick="B2()">B. 继续看病历，学习到深夜</div>
+                <div class="option" onclick="B2()">C. 去病房再看一眼那个老病人</div>
+            `);
+        }
+
+        function B2() {
+            node = 2;
+            setScene("节点2：第一次独立值班（关键）", `
+                画面：深夜，医生办公室。你独自坐在电脑前，急诊电话突然响起：“呼吸科吗？快来！一个咯血的病人！”你冲过去，病人脸色苍白，大口大口吐血。你脑子一片空白，手抖着打电话给二线医生。等老师赶到，病人已经休克。经过抢救，病人转危为安。你瘫坐在走廊，后背全是汗。<br>
+                <span class="narration">旁白：那一夜，你第一次感受到‘生死时速’。你恨自己为什么不能更快、更果断。老师说：‘没关系，谁都有第一次。但你要记住，医生的每个决定，都可能决定一个人的生死。’</span>
+            `, `
+                <div class="option" onclick="B3()">A. 暗下决心：成为最顶尖的专家</div>
+                <div class="option" onclick="B3()">B. 压力太大，想转轻松科室</div>
+            `);
+        }
+
+        function B3() {
+            node = 3;
+            setScene("节点3：非典记忆（沉浸）", `
+                画面：你在医院图书馆翻看旧报纸，看到2003年非典的报道。一张照片上，一位老院士说“把最重的病人都送到我这里来”。你认出了他——钟南山。图书馆老师走过来：“当年我也在一线，那真是……一辈子忘不了。”窗外，2020年的春节即将到来，你不知道一场更大的风暴正在酝酿。<br>
+                <span class="narration">旁白：你从未经历过那样的战争。但那些发黄的报纸告诉你，17年前，有一群人和你一样穿着白大褂，冲进了未知的病毒里。</span>
+            `, `
+                <div class="option" onclick="B4()">A. 借走《非典十年》</div>
+                <div class="option" onclick="B4()">B. 问老师：“再有一次，您还会去吗？”</div>
+                <div class="option" onclick="B4()">C. 拍下照片设为壁纸</div>
+            `);
+        }
+
+        function B4() {
+            node = 4;
+            setScene("节点4：2020年1月 武汉疫情（★ 决定结局）", `
+                画面：你正在看新闻，武汉封城的消息传来。医院开始组织援鄂医疗队，你所在的呼吸科是主力。主任在晨会上说：“自愿报名，不强制。”会议室里鸦雀无声。你看到身边的同事低下头，有人在看手机，有人在写病历，有人在沉思。你的手在发抖，但心里有一个声音在喊。<br>
+                <span class="narration">旁白：2020年1月23日，武汉封城。医院里，援鄂的报名通知贴在公告栏上。你站在那里，看了很久。</span>
+            `, `
+                <div class="option" onclick="showEnding('【结局】钟南山真相线', verdicts.zns_true)">A. 主动请缨，立即报名援鄂</div>
+                <div class="option" onclick="showEnding('【结局】小菩萨分支线', verdicts.doctor_branch)">B. 犹豫了，最终没有报名</div>
+            `);
+        }
+
+        // ------------------------------
+        // C路径：参军 / 陈祥榕线
+        // ------------------------------
+        function startC() {
+            currentPath = "C";
+            node = 0;
+            showStory();
+            C0();
+        }
+
+        function C0() {
+            setScene("节点0：开篇（共通）", `
+                画面：大学毕业典礼后，你走进征兵站。墙上写着“保家卫国，无上光荣”。你签下名字，穿上迷彩服，坐上开往军营的火车。窗外风景从城市变成农田，再变成戈壁。<br>
+                <span class="narration">旁白：你选择了参军。不是因为一时冲动，而是因为你知道，有些地方，总要有人去守。</span>
+            `, `<div class="option" onclick="C1()">进入参军线</div>`);
+        }
+
+        function C1() {
+            node = 1;
+            setScene("节点1：新兵连（沉浸）", `
+                画面：训练场上，你们在雪地里匍匐前进，手肘磨破；队列训练，正步踢了一遍又一遍；夜里紧急集合，你手忙脚乱打背包。班长是个黑脸汉子，嗓门大但心细。一天晚上，他坐在你旁边：“大学生啊？为什么来当兵？”你看着他，想了想。<br>
+                <span class="narration">旁白：新兵连三个月，你掉了十斤肉，手上全是茧。但你发现，你开始习惯嘹亮的军号，开始喜欢和战友一起唱歌。</span>
+            `, `
+                <div class="option" onclick="C2()">A. 回答‘想锻炼自己’</div>
+                <div class="option" onclick="C2()">B. 回答‘想守护点什么’</div>
+                <div class="option" onclick="C2()">C. 反问‘班长，你为什么来？’</div>
+            `);
+        }
+
+        function C2() {
+            node = 2;
+            setScene("节点2：分配去向（★ 关键）", `
+                画面：新兵连结束，你站在分配大会上。团长站在台上：“新疆军区某边防团，海拔5000米，一年四季冰雪，氧气只有平原一半。谁愿意去？”台下寂静。你看到身边的战友低下头，有人在写申请书。<br>
+                <span class="narration">旁白：喀喇昆仑，海拔5000米，被称为‘生命禁区’。团长说：‘那里没有网络，没有商店，只有雪山和风。’</span>
+            `, `
+                <div class="option" onclick="C3A()">A. 主动申请去最艰苦的哨所（河尾滩）</div>
+                <div class="option" onclick="showEnding('【结局】普通边防战士分支线', verdicts.soldier_normal)">B. 选择留在团部做文书</div>
+            `);
+        }
+
+        function C3A() {
+            node = 3;
+            setScene("节点3A：河尾滩哨所（沉浸）", `
+                画面：你坐着卡车，在冰雪路上颠簸了三天。到达哨所时，你看到几间简陋的营房，屋顶覆盖着厚厚的雪。风刮在脸上像刀子。老兵带你去巡逻，你喘不上气，嘴唇发紫。夜里，你躺在冰冷的床上，望着窗外的星空，银河清晰得触手可及。<br>
+                <span class="narration">旁白：河尾滩，全军海拔最高的哨所。你第一次知道，原来氧气真的是奢侈品。但你看到老兵们坚毅的脸，你告诉自己：不能当逃兵。</span>
+            `, `
+                <div class="option" onclick="C4()">A. 给家里写一封家书</div>
+                <div class="option" onclick="C4()">B. 在石头上刻字：清澈的爱，只为中国</div>
+                <div class="option" onclick="C4()">C. 向老兵学习巡逻技巧</div>
+            `);
+        }
+
+        function C4() {
+            node = 4;
+            setScene("节点4：除夕夜站岗（沉浸）", `
+                画面：除夕夜，哨所外风雪交加。你背着枪站在哨位上，远处隐约有烟花的光芒（来自山下的城市）。你想起家乡的饺子、春晚、爸妈的笑容。对讲机里传来班长的话：“同志，辛苦了，新年快乐！”你回了一句：“新年快乐！”然后继续挺直腰板。<br>
+                <span class="narration">旁白：这是你在部队过的第一个除夕。没有团圆饭，没有红包，只有风雪和钢枪。但你心里很踏实——你知道，万家灯火，有你的一份功劳。</span>
+            `, `
+                <div class="option" onclick="C5()">A. 在心里对爸妈说‘新年快乐’</div>
+                <div class="option" onclick="C5()">B. 对着雪山大喊一声‘新年好！’</div>
+                <div class="option" onclick="C5()">C. 唱一首军歌</div>
+            `);
+        }
+
+        function C5() {
+            node = 5;
+            setScene("节点5：2020年6月 加勒万河谷（★ 决定结局）", `
+                画面：你正在哨所擦拭武器，突然接到命令：“外军越线挑衅，快！”你们紧急集合，乘坐卡车赶往加勒万河谷。到达时，你看到团长祁发宝正带着几名官兵与黑压压的外军对峙。团长张开双臂，挡在国境线上，大声呵斥：“退回去！”冲突爆发，石头和棍棒如雨点般砸来。你看到一个战友被围攻，情况危急。<br>
+                <span class="narration">旁白：2020年6月，加勒万河谷。你第一次看到真正的敌人。团长站在最前面，像一座山。</span>
+            `, `
+                <div class="option" onclick="showEnding('【结局】陈祥榕真相线', verdicts.cxr_true)">A. 不等命令，冲上去营救战友</div>
+                <div class="option" onclick="showEnding('【结局】普通边防战士分支线', verdicts.soldier_normal)">B. 遵守命令，原地待命</div>
+            `);
+        }
+
+        // ------------------------------
+        // D路径：快递员 / 汪勇 & 张浩线
+        // ------------------------------
+        function startD() {
+            currentPath = "D";
+            node = 0;
+            showStory();
+            D0();
+        }
+
+        function D0() {
+            setScene("节点0：开篇（共通）", `
+                画面：大学毕业典礼后，你回到武汉老家。你穿上顺丰的工服，骑着电动车穿梭在大街小巷。你负责的片区是老城区，有很多老人。你每天上楼、下楼，递包裹、收件，跟大爷大妈打招呼。<br>
+                <span class="narration">旁白：你没有去大城市，没有进大公司。你成了一名快递员，每天骑着电动车，穿行在武汉的街头。你觉得这样挺好——自由，踏实。</span>
+            `, `<div class="option" onclick="D1()">进入快递员线</div>`);
+        }
+
+        function D1() {
+            node = 1;
+            setScene("节点1：日常工作（沉浸）", `
+                画面：你骑着电动车，后座堆满包裹。你上楼敲门：“王奶奶，您的包裹！”王奶奶开门，笑着递给你一瓶水：“小伙子，辛苦了。”你去下一个小区，一个年轻妈妈接过婴儿尿不湿，说谢谢。晚上，你在站点分拣货物，站长催大家快点。你满头大汗，但心里充实。<br>
+                <span class="narration">旁白：你认识片区里的每一个人。你的工作很平凡，但你觉得，自己是这座城市里一根小小的血管。</span>
+            `, `
+                <div class="option" onclick="D2()">A. 帮王奶奶把重物搬上楼</div>
+                <div class="option" onclick="D2()">B. 跟同事一起吃夜宵</div>
+                <div class="option" onclick="D2()">C. 提前规划明天的路线</div>
+            `);
+        }
+
+        function D2() {
+            node = 2;
+            setScene("节点2：疫情来了（关键）", `
+                画面：2020年1月初，新闻里开始报道“不明原因肺炎”。你的片区里，戴口罩的人越来越多。妈妈打电话来：“孩子，别出门了，太危险。”<br>
+                <span class="narration">旁白：1月20日，钟南山说‘肯定人传人’。你手开始抖。但你的片区里，有很多独居老人，他们不会用手机买菜，只能靠你。</span>
+            `, `
+                <div class="option" onclick="D3()">A. 继续送货，严格防护</div>
+                <div class="option" onclick="D3()">B. 暂时休息几天</div>
+            `);
+        }
+
+        function D3() {
+            node = 3;
+            setScene("节点3：封城第一天（沉浸）", `
+                画面：1月23日，武汉封城。街道上空空荡荡，只有救护车和警车。你骑着电动车，后座堆满大米和药品。你路过金银潭医院，门口排着长长的队。保安隔着栅栏问：“小哥，你还在跑啊？不怕？”你苦笑：“怕啊，但有人等米下锅。”<br>
+                <span class="narration">旁白：武汉封城了。这座城市像是被按下了暂停键，但你还在跑。你知道，如果连你也不跑了，那些老人怎么办？</span>
+            `, `
+                <div class="option" onclick="D4()">A. 给妈妈打电话报平安</div>
+                <div class="option" onclick="D4()">B. 拍街道发朋友圈：武汉加油</div>
+                <div class="option" onclick="D4()">C. 分口罩给环卫工</div>
+            `);
+        }
+
+        function D4() {
+            node = 4;
+            setScene("节点4：看手机（★ 决定汪勇/张浩）", `
+                画面：你在刷手机，看到一张朋友圈截图。
+            `, `
+                <div class="option" onclick="D5A()">A. 点开看 → 汪勇路径</div>
+                <div class="option" onclick="D5B()">B. 没点开 → 张浩路径</div>
+            `);
+        }
+
+        function D5A() {
+            node = 5;
+            setScene("节点5A：汪勇路径（沉浸）", `
+                画面：那是一张金银潭医院一位护士的朋友圈截图：“下班走回家要4个小时，有没有好心人能送一下？”你思忖片刻，拿起了车钥匙。护士上车落泪：“谢谢你，我走了好多天路了……”第二天，你招募志愿者，组建车队，成了医护人员的“大管家”。<br>
+                <span class="narration">旁白：你从一个人变成了一支车队。你没什么大本事，就是不想让他们走路回家。</span>
+            `, `
+                <div class="option" onclick="showEnding('【结局】汪勇真相线', verdicts.wy_true)">完成选择，查看结局</div>
+            `);
+        }
+
+        function D5B() {
+            node = 5;
+            setScene("节点5B：张浩路径（沉浸）", `
+                画面：你开始免费帮医院运送物资，每天把捐赠的口罩、防护服送到医院门口。你穿着雨衣当防护服，戴两层口罩。有一次，你送货到发热门诊，腿有点发软，但还是坚持完成。<br>
+                <span class="narration">旁白：你每天免费送物资。你想，能做一点是一点。你不知道的是，病毒已经在悄悄接近你。</span>
+            `, `
+                <div class="option" onclick="D6()">继续下一步</div>
+            `);
+        }
+
+        function D6() {
+            node = 6;
+            setScene("节点6：感染（★ 决定张浩结局）", `
+                画面：2月中旬，你开始发烧、咳嗽。核酸检测阳性。你给站长发了条消息：“我可能回不来了，帮我照顾好我的片区。”<br>
+                <span class="narration">旁白：你确诊了。你躺在隔离病房，呼吸困难。你想起那些你送过物资的护士，想起他们的笑容。</span>
+            `, `
+                <div class="option" onclick="showEnding('【结局】张浩真相线', verdicts.zh_true)">A. 继续坚持，直到最后</div>
+                <div class="option" onclick="showEnding('【结局】普通快递员分支线', verdicts.express_normal)">B. 积极治疗，痊愈回归</div>
+            `);
+        }
+    </script>
+</body>
+</html>
